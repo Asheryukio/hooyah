@@ -1,0 +1,26 @@
+{
+  "name": "hooyah-email-send",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/app.ts"
+  },
+  "keywords": [],
+  "author": "shaokun",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@hono/node-server": "^1.12.2",
+    "@hono/zod-validator": "^0.2.2",
+    "dotenv": "^16.4.5",
+    "hono": "^4.5.10",
+    "nodemailer": "^6.9.14",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}
