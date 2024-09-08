@@ -1,0 +1,30 @@
+@each $key, $val in sm 50, base 100, lg 160 {
+  // img-base
+  .img-#{$key} {
+    width: #{$val}px !important;
+    height: #{$val}px !important;
+    border-radius: $val * 0.1px;
+  }
+}
+
+// text-overflow-1
+@for $i from 1 through 2 {
+  .text-overflow-#{$i} {
+    display: -webkit-box; 
+    -webkit-line-clamp: #{$i}; 
+    -webkit-box-orient: vertical; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    // &:hover {
+    //   white-space: normal; 
+    //   overflow: visible; 
+    // }
+  }
+}
+
+@each $key, $val in ('sm': 12px, 'base': 16px, 'lg': 20px) {
+  // font-size-base
+  .font-size-#{$key} {
+    font-size: $val !important;
+  }
+}

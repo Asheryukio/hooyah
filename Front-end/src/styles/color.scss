@@ -1,0 +1,30 @@
+// Loop to generate dynamic styles
+// #{xxx}: String interpolation $xx: Numeric values
+// Colors ********************************************
+$color-primary: #00aaff;
+$colors: (
+  'white': #fff,
+  'black': #000,
+  'primary': #00aaff,
+  'success': #4cd964,
+  'warning': #f0ad4e,
+  'error': #999,
+  'disable': #c0c0c0,
+  'grey': #999,
+  'lightgrey': #f6f6f6,
+  'placeholder': #808080,
+  'red': #ff0000,
+  'hover': #f1f1f1,
+  'mask': rgba(0, 0, 0, 0.4),
+);
+@each $key, $value in $colors {
+  .text-color-#{$key} {
+    color: $value;
+  }
+  .bg-color-#{$key} {
+    background-color: $value;
+  }
+}
+.primary-color{
+  color:var(--bmq-primary)
+}

@@ -1,0 +1,20 @@
+/**
+ * Defines the root variables for the theme.
+ *
+ * @variable --bmq-bg: The background color for the theme.
+ * @variable --bmq-modal-bg: The background color for modals in the theme.
+ * @variable --bmq-primary: The primary color for the theme.
+ * @variable --antd-arrow-background-color: The background color for arrows in Ant Design components.
+ */
+:root {
+    --bmq-bg-balck: #000;
+    --bmq-bg: #00000066;
+    --bmq-bg2: #FEF1DD;
+    --bmq-bg3: #FEF1DD;
+    --bmq-modal-bg: #FFFFFF;
+    --bmq-modal-bg1: #FFF8F2;
+    --bmq-primary: #66C175;
+    --bmq-link-hover: #69b1ff;
+    
+    --antd-arrow-background-color: #626462;
+}

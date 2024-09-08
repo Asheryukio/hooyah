@@ -1,0 +1,65 @@
+
+.container{
+    position: relative;
+
+    .content{
+        font-family: Cute Dino;
+        font-size: 28.37px;
+        font-weight: 400;
+        line-height: 56.74px;
+        text-align: center;
+
+        color: white;
+    }
+    .content2{
+        font-family: Cute Dino;
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 56.74px;
+        text-align: center;
+
+
+        color: white;
+    }
+    
+
+    .btn-item1{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 22px 14px 40px;
+        font-size: 14px;
+        color: white;
+        background: #FFFFFF1A;
+        border-radius: 12px;
+        height: 68px;
+        border: 0 !important;
+
+        margin-top: 12px;
+
+        .ant-btn-icon{
+            position: absolute;
+            left: 50%;
+        }
+
+        .icon{
+            width: 40px;
+            margin-right: 16px;
+        }
+
+       
+
+        &.active{
+            background: #f1f1f1;
+
+            .icon-check{
+                display: block;
+            }
+        }
+
+        &:hover{
+            background: #ece8e84a !important;
+        }
+    }
+
+}

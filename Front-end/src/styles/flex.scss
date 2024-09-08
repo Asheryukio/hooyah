@@ -1,0 +1,132 @@
+.g-pad-inline{
+  padding-inline:calc(50vw - 590px) !important;
+}
+.g-margin-left{
+  margin-left:calc(590px - 50vw) !important;
+}
+@media screen and (max-width: 1200px) {
+  .g-pad-inline {
+    padding-inline: 36px !important;
+  }
+  .g-margin-left {
+    margin-left: -36px !important;
+  }
+}
+@media screen and (max-width: 480px) {
+  .g-pad-inline {
+    padding-inline: 16px !important;
+  }
+  .g-margin-left {
+    margin-left: -16px !important;
+  }
+}
+
+// flex ********************************************
+.flex {
+  display: flex;
+}
+.flex-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-center-between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-top-between{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.flex-center-horizontal{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.flex-center-vertical{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.flex-end{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.flex-left-center{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap; 
+}
+// .flex-1{flex:1}
+@for $i from 1 through 6 {
+  .flex-#{$i} {
+    flex: #{$i};
+  }
+}
+$direction: (
+  
+  // Left to right (default)
+  'r': row,
+  // Right to left
+  'rr': row-reverse,
+  // Top to bottom
+  'c': column,
+  // Bottom to top
+  'cr': column-reverse
+);
+// Justify Content - Alignment along the main axis
+$justify: (
+// Start from the beginning, left to right if the main axis is x-axis (default)
+'start': flex-start,
+// Align items in the center of the main axis (horizontal center if the main axis is x-axis)
+'center': center,
+// Start from the end of the main axis
+'end': flex-end,
+// Items are spaced evenly with space between the first and last items
+'between': space-between,
+// Items are spaced evenly with space around each item
+'around': space-around
+);
+
+// Align Items - Alignment along the cross axis
+$align: (
+// Align items from top to bottom
+'start': flex-start,
+// Squeeze items together and align them in the center (vertical center)
+'center': center,
+// Align items from bottom to top
+'end': flex-end,
+// Stretch items to fill the container (default)
+'stretch': stretch
+);
+
+@each $alignKey, $alignVal in $align {
+  @each $justifyKey, $justifyVal in $justify {
+    @each $directionKey, $directionVal in $direction {
+      // flex-start-center
+      .flex-#{$justifyKey}-#{$alignKey} {
+        display: flex;
+        justify-content: #{$justifyVal};
+        align-items: #{$alignVal};
+      }
+      // flex-r-start-center
+      .flex-#{$directionKey}-#{$justifyKey}-#{$alignKey} {
+        display: flex;
+        flex-direction: #{$directionVal};
+        justify-content: #{$justifyVal};
+        align-items: #{$alignVal};
+      }
+    }
+  }
+}
