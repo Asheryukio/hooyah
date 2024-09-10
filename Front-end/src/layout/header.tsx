@@ -129,8 +129,15 @@ const Hed:FC = ()=>{
         // setShowConnect(false);
         
     }
+    let updateAccountTimer;
+    const updateAccount = (data:any)=>{
+        if(updateAccountTimer) clearTimeout(updateAccountTimer);
+        updateAccountTimer = setTimeout(()=>{
+            updateAccount2(data);
+        },850);
+    }
 
-    const updateAccount = async (data:any)=>{
+    const updateAccount2 = async (data:any)=>{
         trace('connect wallet-data',data);
         if(defaultChainId==data?.chainID||data?.chainID==phaChainId){
             const t = Date.now().toString();

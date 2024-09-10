@@ -44,8 +44,9 @@ export async function connect(type: "metamask" | "walletconnect" | "coinbase", c
                 web3 = new Web3(_ethereum);
                 eventsOn(_ethereum, callback);
                 userInfo.message = "metamask";
+            }else{
+                userInfo.message = "Metamask not installed";
             }
-            console.log("connect-tttt", _ethereum,_ethereum.isMetaMask);
         } else if (type === "walletconnect") {
             provider = await EthereumProvider.init({
                 projectId: projectId,
