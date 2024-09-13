@@ -9,6 +9,7 @@ import Payment from '../../components/modal/Payment';
 import Paying from '../../components/modal/Paying';
 import PaySuccess from '../../components/modal/PaySuccess';
 import img1 from '@/assets/sp.png';
+import Terms from '@/components/modal/terms';
 
 
 function Home(){
@@ -19,6 +20,7 @@ function Home(){
     const [showPay,setShowPay] = useState(false);
     const [showPaying,setShowPaying] = useState(false);
     const [showPaySuccess,setShowPaySuccess] = useState(false);
+    const [showTerms,setShowTerms] = useState(false);
     const [paymentInfo,setPaymentInfo] = useState("");
     const [curToken,setCurToken] = useState("");
     const [hash,setHash] = useState("");
@@ -53,8 +55,9 @@ function Home(){
     
 
     const toPay = (code)=>{
+        setShowTerms(false);
         if(code==1) createOrder(curToken);
-        else setShowPay(false);
+        
     }
     const closePaying = ()=>{
         setShowPaying(false);
@@ -183,10 +186,16 @@ function Home(){
         }
     }
 
+    const toShowTerms = (code)=>{
+        setShowPay(false);
+        if(code!=1) return;
+        setShowTerms(true);
+    }
+
     const toBuy = (str:string)=>{
+        setCurToken(str);
         console.log('toBuy',str);
         if(isLogin){
-            setCurToken(str);
             setPaymentInfo(info[str+"_PRICE"]+" "+str);
             setShowPay(true);
         }
@@ -196,7 +205,18 @@ function Home(){
             <div style={{
                 marginTop: '120px',
             }}>
-                <img src={img1} alt="img" />
+                <img style={{width:390}} src={img1} alt="img" />
+                <div style={{
+                    fontFamily: "Poppins",
+                    fontSize: 40,
+                    fontWeight: 600,
+                    lineHeight: "25.11px",
+                    textAlign: "center",
+                    color: "white",
+                    marginTop: 16,
+                    marginBottom: 26,
+                    
+                }}>Buy Hoo Tokens!</div>
             </div>
             {   
                 isLogin && 
@@ -220,7 +240,7 @@ function Home(){
             }
             {
                 showPay &&
-                <Payment data={paymentInfo} callback={toPay} />
+                <Payment data={paymentInfo} callback={toShowTerms} />
             }
             {
                 showPaying &&
@@ -229,6 +249,10 @@ function Home(){
             {
                 showPaySuccess &&
                 <PaySuccess data={paymentInfo} hash={hash} callback={closePaySuccess} />
+            }
+            {
+                showTerms &&
+                <Terms callback={toPay} />
             }
         </div>
     );

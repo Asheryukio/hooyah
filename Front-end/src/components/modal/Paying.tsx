@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import {  trace } from "../../../utils/tools";
 import img1 from "@/assets/icon_loading.png";
-import './continue.scss';
+
 // import store from "@/redux";
 
 interface PayingProps {
@@ -31,8 +31,6 @@ const Paying = ({ data, callback }:PayingProps) : JSX.Element =>{
        centered
      >
        <div className="container">
-
-       
         <div className="content">
             <div 
                 style={{

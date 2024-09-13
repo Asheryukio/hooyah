@@ -1,7 +1,6 @@
 import { Modal } from "antd";
 import {  openNewPage, trace } from "../../../utils/tools";
 
-import './continue.scss';
 import store from "../../redux";
 import linkImg from "@/assets/icon_link.png";
 

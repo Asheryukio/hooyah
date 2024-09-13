@@ -1,7 +1,6 @@
 import { Modal,Button } from "antd";
 import {  trace } from "../../../utils/tools";
 
-import './continue.scss';
 
 interface PaymentProps {
     data: string;
