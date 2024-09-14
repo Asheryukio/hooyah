@@ -5,7 +5,14 @@ import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { sendMail } from "./core.js";
+import { DBPrice } from "./db.js";
+import "./task_price.js";
 const app = new Hono();
+
+app.get("/price", async (c) => {
+    const data = await DBPrice.get();
+    return c.json(data);
+});
 
 app.post(
     "/send",
@@ -35,7 +42,12 @@ app.onError((err, c) => {
     return c.text("internal error", 500);
 });
 
-serve({
-    fetch: app.fetch,
-    port: 8787,
-});
+serve(
+    {
+        fetch: app.fetch,
+        port: 8787,
+    },
+    (info) => {
+        console.log("server started", info.address + ":" + info.port);
+    }
+);
