@@ -17,7 +17,7 @@ async function syncPrice() {
     const ONE_DAY = 24 * 60 * 60 * 1000;
     const current = await DBPrice.get();
     // @ts-ignore
-    if (!current || current.time + ONE_DAY - 30 * 1000 < Date.now()) {
+    if (!current || !current.ETH || current.time + ONE_DAY - 30 * 1000 < Date.now()) {
         Promise.all(
             Object.entries(symbols).map(async ([key, value]) => {
                 return getPrice({ symbol: value });
