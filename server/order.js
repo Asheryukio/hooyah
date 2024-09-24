@@ -2,17 +2,17 @@ require('dotenv').config();
 const { readData, writeData, updateData } = require("./db");
 const { v4: uuidv4 } = require('uuid');
 const { getChainType, genSuccessResponse, genFailResponse } = require("./util");
+const BigNumber = require('bignumber.js');
 
 const userTable = "users";
 const orderTable = "orders";
 
-// 从 .env 文件读取价格
-const ETH_PRICE = parseFloat(process.env.ETH_PRICE);
-const SOLANA_PRICE = parseFloat(process.env.SOLANA_PRICE);
-const USDT_PRICE = parseFloat(process.env.USDT_PRICE);
-
-async function addOrder(address, payCoin) {
+async function addOrder(address, payCoin, amount) {
     try {
+        if(!amount) {
+            return genFailResponse(400, "invalid amount");
+        }
+
         // 1. 根据地址获取用户邮箱
         const userData = await readData(userTable, `WHERE eth_address = '${address}' OR solana_address = '${address}'`);
         if (userData.length === 0) {
@@ -21,33 +21,29 @@ async function addOrder(address, payCoin) {
         const email = userData[0].email;
 
         // 2. 根据 paySymbol 获取对应的价格
-        let price;
-        switch (payCoin.toUpperCase()) {
-            case 'ETH':
-                price = ETH_PRICE;
-                break;
-            case 'SOL':
-                price = SOLANA_PRICE;
-                break;
-            case 'USDT':
-                price = USDT_PRICE;
-                break;
-            default:
-                return genFailResponse(400, "not support coin");
+        const tokenInfo = global.tokens[payCoin.toUpperCase()];
+        if (!tokenInfo) {
+            return genFailResponse(400, "not support coin");
         }
+        let price = new BigNumber(tokenInfo.price);
+        const decimals = tokenInfo.decimals;
+        const totalPrice = new BigNumber(amount).multipliedBy(price).multipliedBy(new BigNumber(10).pow(decimals)).toFixed(0);
 
+        price = price.toString();
         // 3. 生成随机订单 ID
         const orderId = uuidv4();
 
         // 4. 创建订单数据
         const orderData = {
+            amount,
             order_id: orderId,
             email: email,
             pay_coin: payCoin.toUpperCase(),
             pay_chain: getChainType(address),
-            price: price,
+            price,
             status: 0,
             buy_item: 1,
+            total_price: totalPrice,
             create_time: new Date().toISOString()
         };
 
@@ -56,7 +52,8 @@ async function addOrder(address, payCoin) {
 
         return genSuccessResponse({
             orderId: orderId,
-            price
+            price,
+            totalPrice
         });
     } catch (error) {
         console.error("add order failed:", error);

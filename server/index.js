@@ -42,8 +42,8 @@ app.post('/bindAddress', verifyToken, async (req, res) => {
 });
 
 app.post('/addOrder', verifyToken, async (req, res) => {
-    const { payCoin } = req.body;
-    res.json(await addOrder(req.address, payCoin));
+    const { payCoin, amount } = req.body;
+    res.json(await addOrder(req.address, payCoin, amount));
   });
 
 app.post('/payOrder', verifyToken, async (req, res) => {

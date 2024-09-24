@@ -2,6 +2,8 @@ const { readData, updateData } = require("./db");
 const {Web3} = require('web3');
 const axios = require('axios');
 const abi = require('ethereumjs-abi');
+const fs = require('fs');
+const path = require('path');
 const { Connection, PublicKey } = require('@solana/web3.js');
 const { TOKEN_PROGRAM_ID } = require("@solana/spl-token");
 require('dotenv').config();
@@ -20,7 +22,32 @@ const LAMPORTS_PER_SOL = 1e9;
 const USDT_CONTRACT_ADDRESS = process.env.EVM_USDT_CONTRACT;
 // 收款地址
 const ETH_RECEIVER_ADDRESS = process.env.ETH_RECEIVER_ADDRESS;
-const SOLANA_RECEIVER_ADDRESS = new PublicKey(process.env.SOLANA_RECEIVER_ADDRESS);;
+const SOLANA_RECEIVER_ADDRESS = new PublicKey(process.env.SOLANA_RECEIVER_ADDRESS);
+
+// 获取价格并写入 tokens.json
+async function updateTokenPrices() {
+    try {
+        const response = await axios.get('http://127.0.0.1:8787/price');
+        const prices = response.data;
+
+        // 读取现有的 tokens.json 文件
+        const tokensPath = path.join(__dirname, 'tokens.json');
+        const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
+
+        // 更新价格
+        for (const token in prices) {
+            if (tokens[token]) {
+                tokens[token].price = (tokens["USDT_SOLANA"].price / prices[token]).toString();
+            }
+        }
+
+        global.tokens = tokens;
+        // 写入更新后的 tokens.json 文件
+        fs.writeFileSync(tokensPath, JSON.stringify(tokens, null, 4));
+    } catch (error) {
+        console.error('Failed to update token prices:', error);
+    }
+}
 
 async function checkPaidOrders() {
     try {
@@ -73,7 +100,7 @@ async function getUserInfo(email) {
 async function sendConfirmationEmail(order, user) {
     try {
         const chainName = order.pay_chain === 1 ? 'eth' : 'solana';
-        const amount = `${order.price} ${order.pay_coin}`;
+        const amount = `${order.total_price} ${order.pay_coin}`;
 
         const response = await axios.post('http://127.0.0.1:8787/send', {
             sender: user.eth_address || user.solana_address,
@@ -105,7 +132,10 @@ async function checkEthTransaction(order) {
 
         // 验证接收地址和金额
         if (tx.to.toLowerCase() !== ETH_RECEIVER_ADDRESS.toLowerCase()) return false;
-        if (web3.utils.fromWei(tx.value, 'ether') !== order.price.toString()) return false;
+        if (tx.value.toString() !== order.total_price.toString()) {
+            console.log(`Amount mismatch. Expected: ${order.total_price}, Actual: ${tx.value}`);
+            return false
+        }
 
         return true;
     } catch (error) {
@@ -159,9 +189,8 @@ async function checkUsdtTransaction(order) {
             return false;
         }
 
-        const decodedAmount = web3.utils.fromWei(amount, 'ether'); // USDT uses 6 decimal places
-        if (decodedAmount !== order.price.toString()) {
-            console.log(`Amount mismatch. Expected: ${order.price}, Actual: ${decodedAmount}`);
+        if (amount.toString() !== order.total_price.toString()) {
+            console.log(`Amount mismatch. Expected: ${order.total_price}, Actual: ${amount}`);
             return false;
         }
 
@@ -178,7 +207,6 @@ async function checkSolanaTransaction(order) {
     try {
         const signature = order.tx_hash;
         const tx = await solanaConnection.getTransaction(signature, { commitment: 'confirmed' });
-        console.log(tx, tx.transaction, tx.transaction.message.instructions);
         if (!tx || tx.meta.err) return false;
 
         const { message } = tx.transaction;
@@ -187,7 +215,7 @@ async function checkSolanaTransaction(order) {
         let isConfirmed = false;
         if (order.pay_coin === 'SOL') {
             isConfirmed = await checkSolNativeTransfer(tx, order, accountKeys, SOLANA_NATIVE_MINT);
-        } else if (order.pay_coin === 'USDT') {
+        } else if (order.pay_coin === 'USDT_SOLANA') {
             isConfirmed = await checkSplTokenTransfer(tx, order, accountKeys, SOLANA_USDT_MINT);
         }
 
@@ -212,10 +240,10 @@ async function checkSolNativeTransfer(tx, order) {
 
     // Calculate the change in balance for the receiver
     const balanceChangeLamports = postBalances[receiverIndex] - preBalances[receiverIndex];
-    const orderPriceLamports = new BigNumber(order.price).times(LAMPORTS_PER_SOL).integerValue();
+    const orderPriceLamports = order.total_price;
 
     // Check if the balance change matches the order price in lamports
-    if (balanceChangeLamports !== orderPriceLamports.toNumber()) {
+    if (balanceChangeLamports.toString() !== orderPriceLamports.toString()) {
         console.log(`Amount mismatch. Expected: ${orderPriceLamports.toString()} lamports, Actual: ${balanceChangeLamports} lamports`);
         return false;
     }
@@ -251,16 +279,16 @@ async function checkSplTokenTransfer(tx, order) {
     // 计算实际转账金额
     let transferAmount;
     if (receiverPreBalance) {
-        transferAmount = new BigNumber(receiverPostBalance.uiTokenAmount.uiAmount)
-            .minus(receiverPreBalance.uiTokenAmount.uiAmount);
+        transferAmount = new BigNumber(receiverPostBalance.uiTokenAmount.amount)
+            .minus(receiverPreBalance.uiTokenAmount.amount);
     } else {
         // 如果之前没有余额，那么 postBalance 就是转账金额
-        transferAmount = new BigNumber(receiverPostBalance.uiTokenAmount.uiAmount);
+        transferAmount = new BigNumber(receiverPostBalance.uiTokenAmount.amount);
     }
 
     // 检查转账金额是否匹配订单金额
-    if (!transferAmount.isEqualTo(order.price)) {
-        console.log(`Amount mismatch. Expected: ${order.price}, Actual: ${transferAmount.toString()}`);
+    if (!transferAmount.isEqualTo(order.total_price)) {
+        console.log(`Amount mismatch. Expected: ${order.total_price}, Actual: ${transferAmount.toString()}`);
         return false;
     }
 
@@ -277,6 +305,7 @@ async function checkSplTokenTransfer(tx, order) {
 async function runCheckPaidOrders() {
     // console.log('Starting to check paid orders:', new Date().toISOString());
     try {
+        await updateTokenPrices();
         await checkPaidOrders();
         // console.log('Order check completed:', new Date().toISOString());
     } catch (error) {

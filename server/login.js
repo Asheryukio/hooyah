@@ -6,7 +6,6 @@ const { isEthAddress, isSolanaAddress, getChainType, genJwtToken, genSuccessResp
 
 const userTable = "users";
 
-
 async function login(address, timestamp, signature) {
     let recoverAddress;
     let addressField;
@@ -42,9 +41,7 @@ async function login(address, timestamp, signature) {
         token,
         bind,
         userInfo,
-        ETH_PRICE: process.env.ETH_PRICE, 
-        USDT_PRICE: process.env.USDT_PRICE, 
-        SOLANA_PRICE: process.env.SOLANA_PRICE, 
+        tokens: global.tokens,
         EVM_USDT_CONTRACT: process.env.EVM_USDT_CONTRACT,
         SOLANA_USDT_CONTRACT: process.env.SOLANA_USDT_CONTRACT,
         ETH_RECEIVER_ADDRESS: process.env.ETH_RECEIVER_ADDRESS, 
@@ -78,13 +75,14 @@ async function bindAddress(address, email, name) {
         // 如果 name 为空，生成一个唯一的随机名称
         if (!name || name.trim() === '') {
             name = await generateUniqueRandomName();
-        } else {
-            // 检查提供的名称是否已存在
-            const existingUser = await readData(userTable, `WHERE name = '${name}'`);
-            if (existingUser.length > 0) {
-                return genFailResponse(400, "name already exists");
-            }
-        }
+        } 
+        // else {
+        //     // 检查提供的名称是否已存在
+        //     const existingUser = await readData(userTable, `WHERE name = '${name}'`);
+        //     if (existingUser.length > 0) {
+        //         return genFailResponse(400, "name already exists");
+        //     }
+        // }
 
         let bindData = {
             email: email,
