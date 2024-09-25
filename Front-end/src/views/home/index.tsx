@@ -10,10 +10,11 @@ import Paying from '../../components/modal/Paying';
 import PaySuccess from '../../components/modal/PaySuccess';
 import img1 from '@/assets/sp.png';
 import Terms from '@/components/modal/terms';
+import { mul } from '../../../utils/sdk/tools.ts';
 
 
 function Home(){
-    const {isEvm,isLogin,info} = useSelector((state:any)=>state);
+    const {isEvm,isLogin,info,isNetwork} = useSelector((state:any)=>state);
     // const { isEvm,isLogin } = useContext(CountContext);
     // const isEvm = useSelector((state) => state.isEvm);
     // const isLogin = useSelector((state)=>state.isLogin);
@@ -35,7 +36,8 @@ function Home(){
     // getbal();
 
     useEffect(()=>{
-        if(isLogin){
+        trace('paymentInfo-change',paymentInfo,isLogin,isNetwork);
+        if(isLogin&&isNetwork){
             if(isEvm){
                 trace('getTokensBalance evm-getTokensBalance');
                 getTokensBalance().then((eth)=>{
@@ -51,7 +53,8 @@ function Home(){
                 });
             }
         }
-    },[isLogin,isEvm]);
+        
+    },[isLogin,isEvm,showPaySuccess]);
     
 
     const toPay = (code)=>{
@@ -66,18 +69,26 @@ function Home(){
         setShowPaySuccess(false);
     }
 
+    const getprice = (token:string):string => {
+        trace('getprice',token,paymentInfo);
+
+        if(token === 'USDT'||token.includes("USDT")) return getTokenNum(token,info.tokens["USDT"+(isEvm?"_ETHEREUM":"_SOLANA")].price,info.tokens["USDT"+(isEvm?"_ETHEREUM":"_SOLANA")].decimals);
+        else if(token === 'ETH') return getTokenNum(token,info.tokens["ETH"].price,info.tokens["ETH"].decimals);
+        else if(token === 'SOLANA'||token === 'SOL') return getTokenNum('SOLANA',info.tokens["SOL"].price,info.tokens["SOL"].decimals);
+        else return "0";
+    }
 
     const createOrder = async (str:string)=>{
         console.log('createOrder');
         if(isLogin){
 
-            if((str === 'USDT')&&balanceUsdt < +info.USDT_PRICE){
+            if((str === 'USDT')&&balanceUsdt < +getprice('USDT')){
                 showToast('Insufficient balance',MessageType.error);
                 return;
-            }else if((str === 'ETH')&&balanceEth < +info.ETH_PRICE){
+            }else if((str === 'ETH')&&balanceEth < +getprice('ETH')){
                 showToast('Insufficient balance',MessageType.error);
                 return;
-            }else if((str === 'SOLANA')&&balanceSol < +info.SOLANA_PRICE){
+            }else if((str === 'SOLANA')&&balanceSol < +getprice('SOLANA')){
                 showToast('Insufficient balance',MessageType.error);
                 return;
             }
@@ -87,18 +98,18 @@ function Home(){
             setShowPaying(true);
             
 
-            const res = await addOrder(str=="SOLANA"?"SOL":str);
+            const res = await addOrder(str=="SOLANA"?"SOL":(str=="USDT"?(isEvm?"USDT_ETHEREUM":"USDT_SOLANA"):str));
             if(res.code === 200){
                 console.log('createOrder',res);
                 if(str === 'USDT'){
                     if(isEvm) {
-                        buyUsdt(res.data.orderId);
+                        buyUsdt(res.data.orderId,res.data.totalPrice);
                     }
-                    else SOLbuyUsdt(res.data.orderId);
+                    else SOLbuyUsdt(res.data.orderId,res.data.totalPrice);
                 }else if(str === 'ETH'){
-                    buyEth(res.data.orderId);
+                    buyEth(res.data.orderId,res.data.totalPrice);
                 }else if(str === 'SOLANA'){
-                    buySol(res.data.orderId);
+                    buySol(res.data.orderId,res.data.totalPrice);
                 }
             }else{
                 showToast(res.message,MessageType.error);
@@ -126,13 +137,14 @@ function Home(){
         console.log('checkOrder');
         if(isLogin){
             const res = await queryOrder(str);
-            trace('checkOrder',res);
+            trace('checkOrder',res,getprice(res.data.payCoin));
             if(res.code === 200){
                 if(res.data.status == 2){
                     setShowPaying(false);
 
                     setHash(res.data.tx_hash);
-                    setPaymentInfo(res.data.price+" "+res.data.payCoin);
+                    // setPaymentInfo(getprice(res.data.payCoin)+" "+(res.data.payCoin.includes("USDT"))?"USDT":res.data.payCoin);
+                    trace('checkOrder111',paymentInfo);
                     setShowPaySuccess(true);
                 }else if(res.data.status == 1){
                     if(orderTimer) clearTimeout(orderTimer);
@@ -146,43 +158,47 @@ function Home(){
         }
     }
 
-    const buyEth = (orderId:string)=>{
-        transferETH(info.ETH_RECEIVER_ADDRESS,info.ETH_PRICE,(code:number,hash:string)=>{
+    const buyEth = (orderId:string,amount:string)=>{
+        transferETH(info.ETH_RECEIVER_ADDRESS,amount,(code:number,hash:string)=>{
             if(code === 1){
                 console.log('buyEth');
                 confirmOrder(orderId,hash);
             }else if(code>1){
                 showToast(hash,MessageType.error);
+                setShowPaying(false);
             }
         });
     }
-    const buyUsdt = (orderId:string)=>{
+    const buyUsdt = (orderId:string,amount:string)=>{
         
-        transfer(info.EVM_USDT_CONTRACT,info.ETH_RECEIVER_ADDRESS,info.USDT_PRICE,(code:number,hash:string)=>{
+        transfer(info.EVM_USDT_CONTRACT,info.ETH_RECEIVER_ADDRESS,amount,(code:number,hash:string)=>{
             if(code === 1){
                 console.log('buyUsdt');
                 confirmOrder(orderId,hash);
             }else if(code>1){
                 showToast(hash,MessageType.error);
+                setShowPaying(false);
             }
         });
     }
-    const SOLbuyUsdt = async (orderId:string)=>{
-        const {code,hash} = await transferToken(info.SOLANA_RECEIVER_ADDRESS,info.SOLANA_USDT_CONTRACT,info.USDT_PRICE);
+    const SOLbuyUsdt = async (orderId:string,amount:string)=>{
+        const {code,hash} = await transferToken(info.SOLANA_RECEIVER_ADDRESS,info.SOLANA_USDT_CONTRACT,amount);
         if(code === 1){
             console.log('buyUsdt');
             confirmOrder(orderId,hash);
         }else if(code>1){
             showToast(hash,MessageType.error);
+            setShowPaying(false);
         }
     }
-    const buySol = async (orderId:string)=>{
-        const {code,hash} = await transferSol(info.SOLANA_RECEIVER_ADDRESS,info.SOLANA_PRICE);
+    const buySol = async (orderId:string,amount:string)=>{
+        const {code,hash} = await transferSol(info.SOLANA_RECEIVER_ADDRESS,amount);
         if(code === 1){
             console.log('buySol');
             confirmOrder(orderId,hash);
         }else if(code>1){
             showToast(hash,MessageType.error);
+            setShowPaying(false);
         }
     }
 
@@ -192,11 +208,24 @@ function Home(){
         setShowTerms(true);
     }
 
+    const getTokenNum = (token:string,str:any,len:number)=>{
+        // if(token == "USDT") len = isEvm?18:6;
+        trace('getTokenNum',token,str,len);
+        trace('checkOrder222',paymentInfo);
+        return mul(str,"1000",Math.min(4,len));
+    }
+
     const toBuy = (str:string)=>{
         setCurToken(str);
-        console.log('toBuy',str);
+        console.log('toBuy',str,isLogin,isNetwork);
         if(isLogin){
-            setPaymentInfo(info[str+"_PRICE"]+" "+str);
+            if(!isNetwork){
+                showToast('Please switch to corresponding Chain first',MessageType.info);
+                return;
+            }
+           
+            setPaymentInfo(getprice(str)+" "+str);
+            trace('checkOrder333',paymentInfo);
             setShowPay(true);
         }
     }
@@ -224,15 +253,15 @@ function Home(){
                     isEvm ? 
                     (
                         <div>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy({info.USDT_PRICE} USDT)</Button>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("ETH")}}>Buy({info.ETH_PRICE} ETH)</Button>
+                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy( USDT)</Button>
+                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("ETH")}}>Buy( ETH)</Button>
                         </div>
                     )
                     :
                     (
                         <div>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy({info.USDT_PRICE} USDT)</Button>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("SOLANA")}}>Buy({info.SOLANA_PRICE} SOL)</Button>
+                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy( USDT)</Button>
+                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("SOLANA")}}>Buy( SOL)</Button>
                         </div>
                     )
 

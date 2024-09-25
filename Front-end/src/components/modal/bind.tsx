@@ -46,7 +46,10 @@ const Bind = ({ open, callback }:BindProps): JSX.Element=>{
        width="580px"
        footer={null}
        keyboard={false}
+       closable={false}
+       maskClosable={false}
        centered
+
      >
        <div className="container-bind">
 

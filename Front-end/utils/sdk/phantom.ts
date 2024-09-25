@@ -2,6 +2,7 @@ import { Buffer } from 'buffer';
 import { Token } from '@solana/spl-token';
 import basex from 'bs58';
 import { Connection, PublicKey, clusterApiUrl, Transaction, SystemProgram, LAMPORTS_PER_SOL, TransactionInstruction } from '@solana/web3.js';
+import { mul } from './tools';
 (window as any).Buffer = Buffer;
 let currentCluster: 'mainnet-beta' | 'testnet' | 'devnet' = 'devnet';
 
@@ -42,6 +43,8 @@ export async function connectWallet(callback: (data: { account: string; chainID:
     try {
         if(!provider||!provider.connect) return { message: "phantom not installed" };
         const resp = await provider.connect();
+        window["provider"] = provider;
+        console.log("resp", resp);
         if (provider) {
             provider.on('accountChanged', (publicKey: any) => {
                 if (publicKey) {
@@ -77,7 +80,7 @@ export async function getTokenBalance(mintAddress: string) {
     return [{ id: mintAddress, balance }, { id: "0x0", balance: solana / LAMPORTS_PER_SOL }];
 }
 
-export async function transferSol(toPublicKey: string, amount: number) {
+export async function transferSol(toPublicKey: string, amount: string) {
     try {
         const resp = await provider.connect();
         const connection = new Connection(clusterApiUrl(currentCluster), 'confirmed');
@@ -86,7 +89,7 @@ export async function transferSol(toPublicKey: string, amount: number) {
             SystemProgram.transfer({
                 fromPubkey: resp.publicKey,
                 toPubkey: new PublicKey(toPublicKey),
-                lamports: amount * LAMPORTS_PER_SOL
+                lamports: +(amount)   //+mul(amount, LAMPORTS_PER_SOL+"", 0)
             })
         );
         transaction.recentBlockhash = blockhash;
@@ -109,7 +112,7 @@ export async function logoutPhantom() {
     return { account: "", chainID: phaChainId, chain: currentCluster, message: "logout" }
 }
 
-export async function transferToken(destinationAddress: string, tokenMintAddress: string, amount: number) {
+export async function transferToken(destinationAddress: string, tokenMintAddress: string, amount: string) {
     try {
         const resp = await provider.connect();
         const connection = new Connection(clusterApiUrl(currentCluster), 'confirmed');
@@ -145,7 +148,7 @@ export async function transferToken(destinationAddress: string, tokenMintAddress
                 associatedDestTokenAddr,
                 resp.publicKey,
                 [],
-                Number(amount * 1e6)
+                +amount //Number(+amount * 1e6)
             )
         )
         const transaction = new Transaction().add(...instructions);

@@ -33,7 +33,7 @@ export async function mint(token: tokenItem, callback: (code: number, hash: stri
 export async function transfer(token_address: string, to_address: string, amount: string, callback: (code: number, hash: string) => void) {
   console.log('transfer', token_address, to_address, amount);
   let contract = new web3.eth.Contract(ERC20, token_address);
-  let bigAmount = convertNormalToBigNumber(amount, getToken(token_address).decimals);
+  let bigAmount = amount; //convertNormalToBigNumber(amount, getToken(token_address).decimals);
   executeContract(contract, "transfer", "0", [to_address, bigAmount], callback);
 }
 
@@ -47,7 +47,7 @@ export async function transferETH(to_address: string, amount: string, callback: 
   const transaction = {
     from: userInfo.account,
     to: to_address,
-    value: convertNormalToBigNumber(amount),
+    value: (amount),  //convertNormalToBigNumber
   };
   try {
     const txHash = await web3.eth.sendTransaction(transaction);

@@ -34,6 +34,7 @@ const Continue = ({ open, callback }:ContinueProps) : JSX.Element=>{
        footer={null}
        keyboard={false}
        closable={false}
+       maskClosable={false}
        centered
      >
        <div className="container">

@@ -27,9 +27,11 @@ const Terms = ({ callback }:TermsProps) : JSX.Element =>{
        afterClose={handleClose}
        onCancel={handleClose}
        width="980px"
+       
        footer={null}
        keyboard={false}
        centered
+       style={{maxWidth:"65%"}}
      >
        <div className="container">
 
@@ -88,7 +90,7 @@ const Terms = ({ callback }:TermsProps) : JSX.Element =>{
             marginTop: "24px",
          }}>
            <Button type="primary" block  onClick={toContinue}>
-                I Argee
+                I Agree
            </Button>
          </div>
        </div>

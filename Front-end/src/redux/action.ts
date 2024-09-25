@@ -78,3 +78,11 @@ export const setWalletId = (value:number):ActionG => {
         data: value
     };
 }
+
+//set isNetwork
+export const setIsNetwork = (value:boolean):ActionG => {
+    return {
+        type: actionsType.ISNETWORK,
+        data: value
+    };
+}

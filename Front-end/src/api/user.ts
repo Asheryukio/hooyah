@@ -52,7 +52,7 @@ export async function bindAddress(email: string,name:string) {
 //addOrder order:"SOL"
 export async function addOrder(order: string) {
     const url = baseurl+"/addOrder";
-    const data = await request(url,{payCoin:order});
+    const data = await request(url,{payCoin:order,amount:1000});
     return data;
 }
 

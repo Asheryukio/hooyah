@@ -7,6 +7,7 @@ const initState = {
     isMobile: false,
     isLogin: false,
     isEvm:true,
+    isNetwork:false,        
     account: "",
     network: "",
     chainId: 0,
@@ -31,6 +32,7 @@ export enum actionsType {
     EVM='EVM',
     INFO='INFO',
     walletId='walletId',
+    ISNETWORK='ISNETWORK',
 }
 
 export type ActionG = Action & {
@@ -66,6 +68,8 @@ function reducer(state=initState, action:ActionG) {
             return { ...state, info: action.data };
         case actionsType.walletId:
             return { ...state, walletId: action.data };
+        case actionsType.ISNETWORK:
+            return { ...state, isNetwork: action.data };
         default:
             return state;
     }

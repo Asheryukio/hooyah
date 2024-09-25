@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import {  openNewPage, trace } from "../../../utils/tools";
 
 import store from "../../redux";
@@ -11,12 +11,15 @@ interface PaySuccessProps {
   }
 // eslint-disable-next-line @typescript-eslint/ban-types
 const PaySuccess = ({ data,hash, callback }:PaySuccessProps) : JSX.Element =>{
-    trace('Continue',open);
+    trace('PaySuccess-info',open,data,hash,);
     const {isEvm} = store.getState();
 
     const handleClose = () => {
         console.log('close');
         callback(0)
+    }
+    const toContinue = ()=>{
+        window.location.href = "http://hooyah-admin.neicela.com/tokens";
     }
 
     const openUrl = ()=>{
@@ -99,6 +102,13 @@ const PaySuccess = ({ data,hash, callback }:PaySuccessProps) : JSX.Element =>{
             width: "24px",
             cursor:"pointer",
            }} src={linkImg} />
+         </div>
+         <div style={{
+            marginTop: "24px",
+         }}>
+           <Button type="primary" block  onClick={toContinue}>
+             Back
+           </Button>
          </div>
        </div>
      </Modal >

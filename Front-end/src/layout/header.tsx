@@ -1,5 +1,5 @@
 import store from '../redux/index';
-import { setChainId,  setEvm, setAccount, setNetwork, setLogin, setUser, setInfo } from "../redux/action";
+import { setChainId,  setEvm, setAccount, setNetwork, setLogin, setUser, setInfo, setIsNetwork } from "../redux/action";
 import { trace ,replaceStr, copy, showToast} from "../../utils/tools";
 import {  FC, useState } from "react";
 import { Button, Flex,Popover,Divider } from 'antd';
@@ -29,15 +29,15 @@ export const defaultChainId = 421614;   //1
 
 const Hed:FC = ()=>{
     // const [isMask] = useState(false);   //isMask?'heard heard-on':
-    const [showConnect, setShowConnect] = useState<boolean>(false);
+    const [showConnect, setShowConnect] = useState<boolean>(true);
     const [showBind,setShowBind] = useState<boolean>(false);
     const [showContinue, setShowContinue] = useState<boolean>(false);
 
     // const { address,chain,chainID,providerInfo} = useAccountInfo();
 
     // const {account,isLogin,network,isMobile,userInfo} = store.getState();
-    const {isLogin,userInfo,account,network,isMobile,isEvm,walletId} = useSelector((state:never)=>state);
-    
+    const {isLogin,userInfo,account,network,isMobile,isEvm,walletId,isNetwork} = useSelector((state:any)=>state);
+    const [loginData,setLoginData] = useState<any>({});
     // const resizeWindow = ()=>{
     //     store.dispatch(setGHeight(window.innerWidth));
     //     store.dispatch(setGHeight(window.innerHeight));
@@ -46,8 +46,13 @@ const Hed:FC = ()=>{
     // }
     // window.addEventListener('resize', resizeWindow);
     // resizeWindow();
+    let login11:boolean = false;
 
-    trace('isLogin',isLogin,userInfo,account,network,isMobile);
+    
+
+    
+
+    trace('isLogin--0000',isLogin,isNetwork);
 
     const toHome = ()=>{
     }
@@ -65,7 +70,9 @@ const Hed:FC = ()=>{
             const res = await bindAddress(dada.email,dada.name);
             if(res.code==200){
                 setShowBind(false);
-                showToast('Bind Success',MessageType.success);
+                const {data,res} = loginData;
+                loginSuccess(data,res);
+                // showToast('Bind Success',MessageType.success);
                 store.dispatch(setUser(res.data as never));
                 setShowContinue(true);
             }else{
@@ -87,6 +94,14 @@ const Hed:FC = ()=>{
                 if(!data.account){
                     showToast(data.message,MessageType.error);
                     setShowConnect(false);
+
+                    setShowBind(false);
+                    setShowContinue(false);
+
+                    localStorage.removeItem("token");
+                    trace('logout-isLogin1',isLogin,data);
+                    store.dispatch(setLogin(false));
+                    login11 = false;
                 }else{
                     updateAccount(data);
                 }
@@ -96,6 +111,12 @@ const Hed:FC = ()=>{
                 if(!data2.account){
                     showToast(data2.message,MessageType.error);
                     setShowConnect(false);
+                    setShowBind(false);
+                    setShowContinue(false);
+                    localStorage.removeItem("token");
+                    trace('logout-isLogin2',isLogin,data2);
+                    store.dispatch(setLogin(false));
+                    login11 = false;
                 }else{
                     updateAccount(data2);
                 }
@@ -137,44 +158,84 @@ const Hed:FC = ()=>{
         },850);
     }
 
-    const updateAccount2 = async (data:any)=>{
-        trace('connect wallet-data',data);
+    const isOnLogin = (data:any):boolean=>{
         if(defaultChainId==data?.chainID||data?.chainID==phaChainId){
+            store.dispatch(setIsNetwork(true));
+        }else{
+            store.dispatch(setIsNetwork(false));
+        }
+        if(data?.account){
+            return true;
+        }
+        return false;
+    }
+
+    const getDD = ()=>{
+        return {isLogin,isNetwork}
+    }
+
+    const loginSuccess = (data:any,res:any)=>{
+        store.dispatch(setAccount(data.account));
+        store.dispatch(setChainId(data.chainID));
+        store.dispatch(setNetwork(data.chain));
+        store.dispatch(setUser(res.data.userInfo as never));
+        store.dispatch(setInfo(res.data as never));
+
+        store.dispatch(setEvm(data?.chainID!=phaChainId));
+        trace('logout-isLogin5',isLogin);
+        store.dispatch(setLogin(true));
+        login11 = true;
+    }
+
+    const updateAccount2 = async (data:any)=>{
+        const a = isOnLogin(data);
+        trace('connect wallet-data',data,a,login11,getDD(),a);
+        if(a){
+            if(login11){
+                return;
+            }
             const t = Date.now().toString();
-            const sig = (data?.chainID==defaultChainId)?await signEvm(t):await signSolana(t);
+            // const sig = (data?.chainID==defaultChainId)?await signEvm(t):await signSolana(t);
+            const sig = (data?.chainID==phaChainId)?await signSolana(t):await signEvm(t);
             trace('signEvm',sig,data?.chainID);
             if(sig.code!=1){
                 showToast(sig.sign,MessageType.error);
                 setShowConnect(false);
+                trace('logout-isLogin4',isLogin);
+                login11 = false;
                 store.dispatch(setLogin(false));
             }else{
                 const res = await login(data.account,sig.sign,t);
                 setShowConnect(false);
                 trace('login-res',res);
                 if(res.code==200){
-                    store.dispatch(setAccount(data.account));
-                    store.dispatch(setChainId(data.chainID));
-                    store.dispatch(setNetwork(data.chain));
-                    store.dispatch(setUser(res.data.userInfo as never));
-                    store.dispatch(setInfo(res.data as never));
-
-                    store.dispatch(setEvm(data?.chainID==defaultChainId));
-                    store.dispatch(setLogin(true));
+                    setLoginData({data,res});
+                    
 
                     if(!res.data.bind){
                         setShowBind(true);
-                    }
+                        
+                    }else{
                         showToast('Login Success',MessageType.success);
+                        loginSuccess(data,res);
+                    }
+                        
                 }else{
+                    trace('logout-isLogin3',isLogin);
                     store.dispatch(setLogin(false));
+                    login11 = false;
                     showToast(res.message,MessageType.error);
                 }
             }
         }else{
+            trace('logout-isLogin2',isLogin);
             store.dispatch(setLogin(false));
-            showToast('Please switch to corresponding Chain first',MessageType.info);
+            login11 = false;
+            showToast(data.message||"login error.",MessageType.info);
             setShowConnect(false);
         }
+
+        trace('updateAccount2-islogin',isLogin);
     };
 
     const copyToAcc = ()=>{
@@ -190,7 +251,9 @@ const Hed:FC = ()=>{
             logoutPhantom();
         }
         localStorage.removeItem("token");
+        trace('logout-isLogin1',isLogin);
         store.dispatch(setLogin(false));
+        login11 = false;
         trace('logout');
     }
     const getIcon = ()=>{

@@ -23,7 +23,7 @@ const Payment = ({ data, callback }:PaymentProps) : JSX.Element =>{
     return(
     <Modal 
         zIndex={2}
-       title="Payment"
+       title="Buy Hoo Tokens!"
        open={true}
        afterClose={handleClose}
        onCancel={handleClose}
@@ -45,7 +45,7 @@ const Payment = ({ data, callback }:PaymentProps) : JSX.Element =>{
                     lineHeight: "25.11px",
                     textAlign: "left"
                 }}
-            >Total Amount</div>
+            >You Pay</div>
             <div style={{
                 background: "#FFFFFF1A",
                 borderRadius: "20px",
@@ -60,6 +60,31 @@ const Payment = ({ data, callback }:PaymentProps) : JSX.Element =>{
 
 
             }}>{data}</div>
+            <div 
+                style={{
+                    color: "#FFFFFF99",
+                    fontFamily: "Poppins",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    lineHeight: "25.11px",
+                    textAlign: "left",
+                    marginTop: "30px",
+                }}
+            >You Receive</div>
+            <div style={{
+                background: "#FFFFFF1A",
+                borderRadius: "20px",
+                padding: "24px",
+                marginTop: "16px",
+                fontFamily: "Poppins",
+                fontSize: 22,
+                fontWeight: 800,
+                lineHeight: "25.11px",
+                color:"white",
+
+
+
+            }}>1,000 HOO</div>
         </div>
        
 
