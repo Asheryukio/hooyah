@@ -55,6 +55,7 @@ const Hed:FC = ()=>{
     trace('isLogin--0000',isLogin,isNetwork);
 
     const toHome = ()=>{
+        window.location.href = 'http://hooyah-admin.neicela.com/';
     }
     const connecWallet = ()=>{
         trace('connect wallet');
@@ -352,15 +353,15 @@ const Hed:FC = ()=>{
                     </a>
                 </div>
                 {
-                    !isMobile &&
-                    (
-                        <div className="flex-center">
-                            <Button type="link" className="nav-on"><span>The Game</span></Button>
-                            <Button type="link" ><span >Tokens</span></Button>
-                            <Button type="link" ><span >About Us</span></Button>
-                            <Button type="link" ><span >Community</span></Button>
-                        </div>
-                    )
+                    // !isMobile &&
+                    // (
+                    //     <div className="flex-center">
+                    //         <Button type="link" className="nav-on"><span>The Game</span></Button>
+                    //         <Button type="link" ><span >Tokens</span></Button>
+                    //         <Button type="link" ><span >About Us</span></Button>
+                    //         <Button type="link" ><span >Community</span></Button>
+                    //     </div>
+                    // )
                 }
 
                 <Flex  style={

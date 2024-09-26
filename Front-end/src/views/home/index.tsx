@@ -113,6 +113,7 @@ function Home(){
                 }
             }else{
                 showToast(res.message,MessageType.error);
+                setShowPaying(false);
             }
         }
     }
@@ -267,6 +268,9 @@ function Home(){
 
                 )
             }
+            <div>
+                <Button type="primary" style={{marginTop:24,width:280}} onClick={()=>{window.location.href = 'http://hooyah-admin.neicela.com/';}}>Go Home</Button>
+            </div>
             {
                 showPay &&
                 <Payment data={paymentInfo} callback={toShowTerms} />

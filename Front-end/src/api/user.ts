@@ -1,4 +1,5 @@
-const baseurl = "https://api-hooyah.bba.sh";
+// const baseurl = "https://api-hooyah.bba.sh";
+const baseurl = "https://api-web3.hooyah.io";
 /**
  * Encapsulate requests
  * @param url 
