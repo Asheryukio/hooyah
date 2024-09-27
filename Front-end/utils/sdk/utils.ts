@@ -36,6 +36,7 @@ export function logout() {
 */
 export async function connect(type: "metamask" | "walletconnect" | "coinbase", callback: (data: { account: string; chainID: number; chain: string, message: string; }) => void) {
     console.log("connect-tttt", type);
+    const isMobile = window.innerWidth<=640;
     try {
         if (type === "metamask") {
             const _ethereum: any = await detectEthereumProvider({ mustBeMetaMask: true });
@@ -45,7 +46,7 @@ export async function connect(type: "metamask" | "walletconnect" | "coinbase", c
                 eventsOn(_ethereum, callback);
                 userInfo.message = "metamask";
             }else{
-                userInfo.message = "Metamask not installed";
+                userInfo.message = isMobile?"Please use a Web3 Dapp browser to access.":"Metamask not installed";
             }
         } else if (type === "walletconnect") {
             provider = await EthereumProvider.init({

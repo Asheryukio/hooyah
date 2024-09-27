@@ -12,6 +12,8 @@ import img1 from '@/assets/sp.png';
 import Terms from '@/components/modal/terms';
 import { mul } from '../../../utils/sdk/tools.ts';
 
+import "./home.scss";
+
 
 function Home(){
     const {isEvm,isLogin,info,isNetwork} = useSelector((state:any)=>state);
@@ -235,7 +237,7 @@ function Home(){
             <div style={{
                 marginTop: '120px',
             }}>
-                <img style={{width:390}} src={img1} alt="img" />
+                <img style={{width:390,maxWidth:"90%"}} src={img1} alt="img" />
                 <div style={{
                     fontFamily: "Poppins",
                     fontSize: 40,
@@ -269,7 +271,7 @@ function Home(){
                 )
             }
             <div>
-                <Button type="primary" style={{marginTop:24,width:280}} onClick={()=>{window.location.href = 'http://hooyah-admin.neicela.com/';}}>Go Home</Button>
+                <Button type="primary" className="title-btn" style={{marginTop:24}} onClick={()=>{window.location.href = 'http://hooyah-admin.neicela.com/';}}>Go Home</Button>
             </div>
             {
                 showPay &&

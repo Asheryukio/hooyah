@@ -1,5 +1,5 @@
 import store from '../redux/index';
-import { setChainId,  setEvm, setAccount, setNetwork, setLogin, setUser, setInfo, setIsNetwork } from "../redux/action";
+import { setChainId,  setEvm, setAccount, setNetwork, setLogin, setUser, setInfo, setIsNetwork, setMobile, setGHeight, setGWidth } from "../redux/action";
 import { trace ,replaceStr, copy, showToast} from "../../utils/tools";
 import {  FC, useState } from "react";
 import { Button, Flex,Popover,Divider } from 'antd';
@@ -39,10 +39,9 @@ const Hed:FC = ()=>{
     const {isLogin,userInfo,account,network,isMobile,isEvm,walletId,isNetwork} = useSelector((state:any)=>state);
     const [loginData,setLoginData] = useState<any>({});
     // const resizeWindow = ()=>{
-    //     store.dispatch(setGHeight(window.innerWidth));
+    //     store.dispatch(setGWidth(window.innerWidth));
     //     store.dispatch(setGHeight(window.innerHeight));
     //     store.dispatch(setMobile(window.innerWidth<=640));
-
     // }
     // window.addEventListener('resize', resizeWindow);
     // resizeWindow();
@@ -93,7 +92,7 @@ const Hed:FC = ()=>{
             // //"metamask" | "walletconnect" | "coinbase",
             connect(data,(data:any)=>{
                 if(!data.account){
-                    showToast(data.message,MessageType.error);
+                    showToast(data.message,MessageType.info);
                     setShowConnect(false);
 
                     setShowBind(false);
@@ -110,7 +109,7 @@ const Hed:FC = ()=>{
             }).then((data2:any)=>{
                 trace('connect-wallet-1',data2);
                 if(!data2.account){
-                    showToast(data2.message,MessageType.error);
+                    showToast(data2.message,MessageType.info);
                     setShowConnect(false);
                     setShowBind(false);
                     setShowContinue(false);
@@ -127,7 +126,7 @@ const Hed:FC = ()=>{
             if(data=='phantom'){
                 connectWallet((data1)=>{
                     if(!data1.account){
-                        showToast(data1.message,MessageType.error);
+                        showToast(data1.message,MessageType.info);
                         setShowConnect(false);
                     }else{
                         updateAccount(data1);
@@ -136,7 +135,7 @@ const Hed:FC = ()=>{
                 }).then((data2)=>{
                     trace('connect-wallet-data2',data2);
                     if(!data2.account){
-                        showToast(data2.message,MessageType.error);
+                        showToast(data2.message,MessageType.info);
                         setShowConnect(false);
                     }else{
                         updateAccount(data2);
@@ -376,7 +375,6 @@ const Hed:FC = ()=>{
                     (
                         <span className="btn-primary-filter">
                             <Button
-                            
                             className="title-btn"
                             onClick={connecWallet}
                             >Connect Wallet</Button>

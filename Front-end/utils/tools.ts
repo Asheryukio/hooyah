@@ -92,7 +92,7 @@ export function showToast(
   message.config({
     top: 100,
     maxCount: 3,
-    rtl: true,
+    rtl: false,
     prefixCls: 'my-message',
   });
   // message.success(content, duration, callback);

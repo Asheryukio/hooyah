@@ -15,7 +15,7 @@ function getProvider() {
             return provider;
         }
     }
-    window.open('https://phantom.app/', '_blank');
+    // window.open('https://phantom.app/', '_blank');
 }
 
 
@@ -40,8 +40,9 @@ export async function signSolana(message?: string) {
 const provider = getProvider();
 
 export async function connectWallet(callback: (data: { account: string; chainID: number; chain: string, message: string; }) => void) {
+    const isMobile = window.innerWidth<=640;
     try {
-        if(!provider||!provider.connect) return { message: "phantom not installed" };
+        if(!provider||!provider.connect) return { message: isMobile?"Please use a Web3 Dapp browser to access.":"phantom not installed." };
         const resp = await provider.connect();
         window["provider"] = provider;
         console.log("resp", resp);
