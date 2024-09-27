@@ -223,7 +223,7 @@ function Home(){
         console.log('toBuy',str,isLogin,isNetwork);
         if(isLogin){
             if(!isNetwork){
-                showToast('Please switch to corresponding Chain first',MessageType.info);
+                showToast('Please switch to Arbitrum Sepolia Network.',MessageType.info);
                 return;
             }
            

@@ -92,7 +92,7 @@ const Hed:FC = ()=>{
             // //"metamask" | "walletconnect" | "coinbase",
             connect(data,(data:any)=>{
                 if(!data.account){
-                    showToast(data.message+"这个错误通常出现在使用 Hardhat 编译合约时，原因可能是 Hardhat 无法找到指定合约的编译工件",MessageType.info);
+                    showToast(data.message,MessageType.info);
                     setShowConnect(false);
 
                     setShowBind(false);

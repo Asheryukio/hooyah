@@ -26,13 +26,7 @@ body {
   background-image: url(../assets/bg.jpg);
   background-size: cover;
 }
-@media (max-width: 640px) {
-  #app,
-  html,
-  body {
-    min-width: 320px;
-  }
-}
+
 
 #root{
   position: relative;
@@ -540,4 +534,16 @@ w3m-modal{
   box-shadow: none;
   outline: 0;
   background-color: transparent;
+}
+
+@media (max-width: 640px) {
+  #app,
+  html,
+  body {
+    min-width: 320px;
+  }
+  .ant-modal .ant-modal-content {
+    padding: 16px;
+    border-radius: 20px;
+  }
 }

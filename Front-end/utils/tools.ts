@@ -95,6 +95,11 @@ export function showToast(
     rtl: false,
     prefixCls: 'my-message',
   });
+  if(type==MessageType.info||type==MessageType.error){
+    if(content.toLocaleLowerCase().includes('rejected')){
+      content="User rejected";
+    }
+  }
   // message.success(content, duration, callback);
  
   message[type](content, duration, callback);
