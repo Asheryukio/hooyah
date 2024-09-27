@@ -31,7 +31,7 @@ const Terms = ({ callback }:TermsProps) : JSX.Element =>{
        footer={null}
        keyboard={false}
        centered
-       style={{maxWidth:"65%"}}
+       style={{maxWidth:"95%"}}
      >
        <div className="container">
 
