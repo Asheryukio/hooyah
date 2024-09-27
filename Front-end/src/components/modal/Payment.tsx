@@ -90,8 +90,9 @@ const Payment = ({ data, callback }:PaymentProps) : JSX.Element =>{
 
          <div style={{
             marginTop: "24px",
+            textAlign: "center",
          }}>
-           <Button type="primary" block  onClick={toContinue}>
+           <Button className="title-btn" type="primary"   onClick={toContinue}>
              Pay
            </Button>
          </div>

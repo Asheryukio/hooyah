@@ -47,8 +47,8 @@ const Continue = ({ open, callback }:ContinueProps) : JSX.Element=>{
             Hey {userInfo?.email}
         </div>
 
-         <div className="btn-con" style={{marginTop:36}}>
-           <Button type="primary" block  onClick={toContinue}>
+         <div className="btn-con" style={{marginTop:36,textAlign:"center"}}>
+           <Button className="title-btn" type="primary"   onClick={toContinue}>
            Continue
            </Button>
          </div>

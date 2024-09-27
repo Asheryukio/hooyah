@@ -63,8 +63,8 @@ const Bind = ({ open, callback }:BindProps): JSX.Element=>{
             By creating account, I agree to the <span className="t2">terms of use</span> and acknowledge that i have read the <span className="t2">Privacy Policy</span>.
         </div>
 
-         <div className="btn-con" style={{marginTop:24}}>
-           <Button type="primary" block loading={isLoading} disabled={isDisabled} onClick={toBind}>
+         <div className="btn-con" style={{marginTop:24,textAlign:"center"}}>
+           <Button className="title-btn" type="primary"  loading={isLoading} disabled={isDisabled} onClick={toBind}>
              Submit
            </Button>
          </div>

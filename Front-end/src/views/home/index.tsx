@@ -256,15 +256,15 @@ function Home(){
                     isEvm ? 
                     (
                         <div>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy( USDT)</Button>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("ETH")}}>Buy( ETH)</Button>
+                            <Button type="primary" className="title-btn" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy( USDT)</Button>
+                            <Button type="primary" className="title-btn" style={{marginInline:6}} onClick={()=>{toBuy("ETH")}}>Buy( ETH)</Button>
                         </div>
                     )
                     :
                     (
                         <div>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy( USDT)</Button>
-                            <Button type="primary" style={{marginInline:6}} onClick={()=>{toBuy("SOLANA")}}>Buy( SOL)</Button>
+                            <Button type="primary" className="title-btn" style={{marginInline:6}} onClick={()=>{toBuy("USDT")}}>Buy( USDT)</Button>
+                            <Button type="primary" className="title-btn" style={{marginInline:6}} onClick={()=>{toBuy("SOLANA")}}>Buy( SOL)</Button>
                         </div>
                     )
 
