@@ -12,7 +12,7 @@ import img1 from '@/assets/sp.png';
 import Terms from '@/components/modal/terms';
 import { mul } from '../../../utils/sdk/tools.ts';
 
-import "./home.scss";
+// import "./home.scss";
 
 
 function Home(){
@@ -270,9 +270,9 @@ function Home(){
 
                 )
             }
-            <div>
+            {/* <div>
                 <Button type="primary" className="title-btn" style={{marginTop:24}} onClick={()=>{window.location.href = 'http://hooyah-admin.neicela.com/';}}>Go Home</Button>
-            </div>
+            </div> */}
             {
                 showPay &&
                 <Payment data={paymentInfo} callback={toShowTerms} />

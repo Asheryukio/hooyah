@@ -107,9 +107,9 @@ const PaySuccess = ({ data,hash, callback }:PaySuccessProps) : JSX.Element =>{
             marginTop: "24px",
             textAlign: "center",
          }}>
-           <Button className="title-btn" type="primary"   onClick={toContinue}>
+           {/* <Button className="title-btn" type="primary"   onClick={toContinue}>
              Back
-           </Button>
+           </Button> */}
          </div>
        </div>
      </Modal >
