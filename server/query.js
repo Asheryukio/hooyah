@@ -120,7 +120,7 @@ async function sendConfirmationEmail(order, user) {
             order: order.order_id,
             hash: order.tx_hash,
             chain: chainName,
-            amount: readableAmount
+            amount: `${readableAmount} ${order.pay_coin}`
         }, {
             headers: {
                 'Content-Type': 'application/json'
