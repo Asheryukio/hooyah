@@ -110,8 +110,8 @@ async function sendConfirmationEmail(order, user) {
         // 将 total_price 转换为 BigNumber
         const totalPrice = new BigNumber(order.total_price);
 
-        // 计算不带小数位的金额
-        const amount = totalPrice.toString();
+        // 计算人类可读的金额
+        const readableAmount = totalPrice.dividedBy(new BigNumber(10).pow(tokenInfo.decimals)).toString();
 
         const response = await axios.post('http://127.0.0.1:8787/send', {
             sender: order.eth_address || order.solana_address,
@@ -120,7 +120,7 @@ async function sendConfirmationEmail(order, user) {
             order: order.order_id,
             hash: order.tx_hash,
             chain: chainName,
-            amount
+            amount: readableAmount
         }, {
             headers: {
                 'Content-Type': 'application/json'
