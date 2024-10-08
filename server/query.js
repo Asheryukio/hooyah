@@ -114,7 +114,7 @@ async function sendConfirmationEmail(order, user) {
         const readableAmount = totalPrice.dividedBy(new BigNumber(10).pow(tokenInfo.decimals)).toString();
 
         const response = await axios.post('http://127.0.0.1:8787/send', {
-            sender: order.eth_address || order.solana_address,
+            sender: user.eth_address || user.solana_address,
             name: user.name,
             to: user.email,
             order: order.order_id,
