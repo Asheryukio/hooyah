@@ -23,7 +23,7 @@ import img4 from "@/assets/phantom.png";
 
 
 
-export const defaultChainId = 421614;   //1
+export const defaultChainId = 1;   //1  421614
 
 
 

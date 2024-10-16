@@ -4,7 +4,7 @@ import basex from 'bs58';
 import { Connection, PublicKey, clusterApiUrl, Transaction, SystemProgram, LAMPORTS_PER_SOL, TransactionInstruction } from '@solana/web3.js';
 import { mul } from './tools';
 (window as any).Buffer = Buffer;
-let currentCluster: 'mainnet-beta' | 'testnet' | 'devnet' = 'devnet';
+let currentCluster: 'mainnet-beta' | 'testnet' | 'devnet'| 'Solana' = 'Solana';
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
 function getProvider() {

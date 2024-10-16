@@ -24,10 +24,16 @@ const PaySuccess = ({ data,hash, callback }:PaySuccessProps) : JSX.Element =>{
 
     const openUrl = ()=>{
         if(isEvm){
-            openNewPage(`https://sepolia.arbiscan.io/tx/${hash}`);
+            openNewPage(`https://etherscan.io/tx/${hash}`);
         }else{
-            openNewPage(`https://explorer.solana.com/tx/${hash}?cluster=devnet`);
+            openNewPage(`https://solscan.io/tx/${hash}`);
         }
+        //test
+      // if(isEvm){
+      //     openNewPage(`https://sepolia.arbiscan.io/tx/${hash}`);
+      // }else{
+      //     openNewPage(`https://explorer.solana.com/tx/${hash}?cluster=devnet`);
+      // }
         
     }
     

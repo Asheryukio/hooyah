@@ -7,7 +7,7 @@ export { transfer, transferETH, signEvm } from "./execute";
 export { logout, getToken, connect } from "./utils"
 export { connectWallet, getTokenBalance, signSolana, transferToken, transferSol, logoutPhantom } from "./phantom";
 
-const tokens = [{ id: "0xB757c8A137aaa639fe96f3fB7e45119B146b034a", symbol: "USDT", decimal: 18 },
+const tokens = [{ id: "0xdAC17F958D2ee523a2206206994597C13D831ec7", symbol: "USDT", decimal: 18 },
 { id: "0x0000000000000000000000000000000000000000", symbol: "ETH", decimal: 18 }]
 
 export async function getTokensBalance() {
