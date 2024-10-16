@@ -8,6 +8,7 @@ const { Connection, PublicKey } = require('@solana/web3.js');
 const { TOKEN_PROGRAM_ID } = require("@solana/spl-token");
 require('dotenv').config();
 const BigNumber = require('bignumber.js');
+const tokens = require('./tokens.json');
 
 // 初始化 Web3 实例（用于以太坊）
 const web3 = new Web3(process.env.ETH_RPC_URL);
@@ -100,7 +101,17 @@ async function getUserInfo(email) {
 async function sendConfirmationEmail(order, user) {
     try {
         const chainName = order.pay_chain === 1 ? 'eth' : 'solana';
-        const amount = `${order.total_price} ${order.pay_coin}`;
+        const tokenInfo = tokens[order.pay_coin];
+        
+        if (!tokenInfo) {
+            throw new Error(`Token information not found for ${order.pay_coin}`);
+        }
+
+        // 将 total_price 转换为 BigNumber
+        const totalPrice = new BigNumber(order.total_price);
+
+        // 计算人类可读的金额
+        const readableAmount = totalPrice.dividedBy(new BigNumber(10).pow(tokenInfo.decimals)).toString();
 
         const response = await axios.post('http://127.0.0.1:8787/send', {
             sender: user.eth_address || user.solana_address,
@@ -109,7 +120,7 @@ async function sendConfirmationEmail(order, user) {
             order: order.order_id,
             hash: order.tx_hash,
             chain: chainName,
-            amount: amount
+            amount: `${readableAmount} ${order.pay_coin}`
         }, {
             headers: {
                 'Content-Type': 'application/json'
