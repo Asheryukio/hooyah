@@ -435,18 +435,18 @@ body {
 }
 
 
-.ant-table-body::-webkit-scrollbar {
+.ant-table-body::-webkit-scrollbar,.h-scroll::-webkit-scrollbar {
   width: 8px; 
   height: 8px; 
 }
 
-.ant-table-body::-webkit-scrollbar-thumb {
-  background-color: #262278; 
+.ant-table-body::-webkit-scrollbar-thumb,.h-scroll::-webkit-scrollbar-thumb {
+  background-color: #FFFFFF; 
   border-radius: 100px;
 }
 
-.ant-table-body::-webkit-scrollbar-track {
-  background-color: #4A4695; 
+.ant-table-body::-webkit-scrollbar-track ,.h-scroll::-webkit-scrollbar-track {
+  background-color: #FFFFFF33; 
   border-radius: 100px;
 }
 
@@ -557,9 +557,9 @@ w3m-modal{
 
 
   font-family: Poppins;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 21px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25.11px;
   color: white;
   background-image: url(@/assets/btn_bg.png)  !important;
   background-size: 100% 100% !important;

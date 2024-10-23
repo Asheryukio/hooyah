@@ -223,7 +223,7 @@ function Home(){
         console.log('toBuy',str,isLogin,isNetwork);
         if(isLogin){
             if(!isNetwork){
-                showToast('Please switch to Arbitrum Sepolia Network.',MessageType.info);
+                showToast('Please switch to Ethereum Mainnet Network.',MessageType.info);
                 return;
             }
            
